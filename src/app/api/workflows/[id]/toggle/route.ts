@@ -4,13 +4,13 @@ import { getUserFromRequest } from "@/lib/auth/getUserFromRequest";
 import { successResponse, errorResponse } from "@/lib/utils/api-response";
 import { toggleWorkflow } from "@/lib/services/workflow.service";
 
-type Params = {
-  params: {
+type Context = {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(request: NextRequest, context: Context) {
   try {
     await connectDB();
 
@@ -19,7 +19,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return errorResponse("Unauthorized", 401);
     }
 
-    const workflow = await toggleWorkflow(user.userId, params.id);
+    const { id } = await context.params;
+
+    const workflow = await toggleWorkflow(user.userId, id);
+
     return successResponse("Workflow updated successfully", workflow);
   } catch (error) {
     const message =
