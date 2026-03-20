@@ -36,35 +36,57 @@ export function DashboardSidebar({ onClose }: Props) {
       </div>
 
       <nav className="flex-1 space-y-2 px-3 py-4">
-        {dashboardNavItems.map((item) => {
+        {dashboardNavItems.map((item, index) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
           return (
-            <Link
+            <motion.div
               key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "relative flex items-center gap-3 overflow-hidden rounded-xl px-4 py-3 text-sm font-medium transition",
-                isActive
-                  ? "bg-white text-black"
-                  : "text-neutral-300 hover:bg-white/10 hover:text-white"
-              )}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: index * 0.03,
+                type: "spring",
+                stiffness: 260,
+                damping: 22,
+              }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
             >
-              {isActive && (
-                <motion.span
-                  layoutId="active-nav-pill"
-                  className="absolute inset-0 rounded-xl bg-white"
-                  transition={{ type: "spring", stiffness: 280, damping: 26 }}
-                />
-              )}
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className={cn(
+                  "relative flex items-center gap-3 overflow-hidden rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  isActive
+                    ? "text-black"
+                    : "text-neutral-300 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="active-nav-pill"
+                    className="absolute inset-0 rounded-xl bg-white"
+                    transition={{
+                      type: "spring",
+                      stiffness: 280,
+                      damping: 26,
+                    }}
+                  />
+                )}
 
-              <span className="relative z-10 flex items-center gap-3">
-                <Icon className="h-4 w-4" />
-                {item.title}
-              </span>
-            </Link>
+                <span className="relative z-10 flex items-center gap-3">
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 transition-transform",
+                      isActive && "scale-110"
+                    )}
+                  />
+                  {item.title}
+                </span>
+              </Link>
+            </motion.div>
           );
         })}
       </nav>
